@@ -1,0 +1,25 @@
+# Python
+__pycache__
+*.cpy
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# Dataset
+*.idx
+*.rec
+*.log
+
+# Model
+projects/*/models/
+*.params
+*.wxf
+*.mx
+
+# Picture
+*.jpg
+*.jped
+*.bmp
+*.png
