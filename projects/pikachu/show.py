@@ -18,7 +18,7 @@ mpl.rcParams['figure.figsize'] = (6, 6)
 net = gluon.nn.SymbolBlock.imports(
     'models/yolo_pikachu-symbol.json',
     ['data'],
-    param_file='models/yolo_pikachu-0050.params',
+    param_file='models/yolo_pikachu-0025.params',
     ctx=ctx
 )
 

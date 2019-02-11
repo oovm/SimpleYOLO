@@ -5,8 +5,8 @@ import mxnet.gluon.nn as nn
 import numpy as np
 from mxnet import autograd, gluon, image, nd
 
+from SimpleYOLO.YOLO2.functions import yolo2_decoder, yolo2_target
 from SimpleYOLO.YOLO2.metric import LossRecorder
-from SimpleYOLO.YOLO2.functions import YOLO2Output, yolo2_decoder, yolo2_target
 from projects.pikachu.config import Config
 
 batch_size = 32
@@ -26,8 +26,7 @@ train_data = image.ImageDetIter(
     rand_mirror=True,
     rand_crop=1,
     min_object_covered=0.95,
-    max_attempts=100,
-    num_thread=4
+    max_attempts=100
 )
 test_data = image.ImageDetIter(
     data_shape=(3, data_h, data_w),
@@ -57,19 +56,25 @@ sym = gluon.nn.SymbolBlock.imports(
     ctx=ctx
 )
 net.add(sym)
-
+'''
 # use 2 classes, 1 as dummy class, otherwise softmax won't work
 predictor = YOLO2Output(2, anchors)
 predictor.initialize()
 net.add(predictor)
-
+'''
 print('initialized')
 net.collect_params().reset_ctx(ctx)
 # 'sgd', {'learning_rate': 0.01, 'wd': 5e-4}
-trainer = gluon.Trainer(net.collect_params(), 'adam')
-net.hybridize()
+lr_sch = mx.lr_scheduler.FactorScheduler(base_lr=0.01, step=5, factor=0.5)
+trainer = gluon.Trainer(
+    net.collect_params(),
+    'adam'
+    # optimizer_params={'lr_scheduler': lr_sch}
+)
 
-round = 50
+# Start Training
+round = 25
+net.hybridize()
 now = time.strftime("%Y%m%d%H%M%S", time.localtime())
 log_file = open("logs/%s.log" % now, 'w+')
 for epoch in range(round):
@@ -114,11 +119,12 @@ for epoch in range(round):
         box_loss.get()[1],
         time.time() - tic
     )
-    string = 'Epoch %2d, train %s %f, %s %.5f, %s %.5f time %.1f sec' % log
+    string = 'Epoch %2d, train %s %.8f, %s %.8f, %s %.8f time %.1f sec' % log
     print(string)
-    print(string, file=log_file)
+    log_file.writelines("\n" + string)
 
 print('finished')
 
 # net.save_parameters('models/yolo_pikachu-0050.params')
 net.export('models/yolo_pikachu', round)
+log_file.close()

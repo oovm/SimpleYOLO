@@ -7,11 +7,16 @@ SetDirectory@NotebookDirectory[];
 (*<<DeepMath`*)
 
 
-net=Import["Resnet18-V1b trained on ImageNet.WXF"]
-NetTake[net,"Extractor"]
+net = Import["Resnet18-V1b trained on ImageNet.WXF"]
+NetTake[net, "Extractor"]
 
 
-NetSave[NetExtract[net,"Extractor"],"Resnet18_V1"]
+(*Anchors*(4+1+Classes)*)
+new = NetChain[{
+	"Extractor" -> NetExtract[net, "Extractor"],
+	"Detector" -> ConvolutionLayer[2 * (2 + 1 + 4), {1, 1}]
+}] // NetInitialize
+NetSave[new, "Resnet18_V1"]
 
 
-NetSave[net,"Resnet18_V11111111"]
+
