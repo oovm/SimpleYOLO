@@ -62,7 +62,7 @@ predictor = YOLO2Output(2, anchors)
 predictor.initialize()
 net.add(predictor)
 '''
-print('initialized')
+print('Model Initialized')
 net.collect_params().reset_ctx(ctx)
 # 'sgd', {'learning_rate': 0.01, 'wd': 5e-4}
 lr_sch = mx.lr_scheduler.FactorScheduler(base_lr=0.01, step=5, factor=0.5)
@@ -72,7 +72,7 @@ trainer = gluon.Trainer(
     # optimizer_params={'lr_scheduler': lr_sch}
 )
 
-# Start Training
+print('Start Training')
 round = 25
 net.hybridize()
 now = time.strftime("%Y%m%d%H%M%S", time.localtime())

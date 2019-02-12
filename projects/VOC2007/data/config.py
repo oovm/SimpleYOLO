@@ -1,8 +1,8 @@
 class Config:
     version = "yolo2"  # Model name
     input = "data"  # Input Port Name
-    backbone_symbol = ""  # Symbol Path
-    backbone_params = ""  # Array Path
+    backbone_symbol = "external/YOLO on VOC-symbol.json"  # Symbol Path
+    backbone_params = "external/YOLO on VOC-0000.params"  # Array Path
 
     train_idx = "./train.idx"
     train_rec = "./train.rec"
